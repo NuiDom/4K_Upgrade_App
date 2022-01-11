@@ -9,7 +9,7 @@
 
 QSerialPort serial;
 char usbCmd[10] = "";
-QString mFile = INPUT_PATH;
+QString mFile = "/home/dnutt/Desktop/4K.X.production.hex";
 QString m2File = "/home/dnutt/Desktop/FF.txt";
 
 MainWindow::MainWindow(QWidget *parent)
@@ -41,7 +41,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     serial.write("UPGRADE");
-    qDebug() << "UPGRADE";
+    qDebug() << "Jump to BL";
     msdelay(50);
 //    while(serial.isOpen()){
 //        if(!serial.waitForReadyRead(-1)){
@@ -67,7 +67,7 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_4_clicked()
 {
     serial.write("JUMP");
-    qDebug() << "JUMP";
+    qDebug() << "Jump to App";
     msdelay(50);
 //    while(serial.isOpen()){
 //        if(!serial.waitForReadyRead(-1)){
@@ -95,7 +95,7 @@ void MainWindow::msdelay(int msec)
 void MainWindow::writeToFile(QString fileName)
 {
     QFile mFile(fileName);
-    if(!mFile.open(QFile::WriteOnly | QFile::Text))
+    if(!mFile.open(QFile::WriteOnly))
     {
         qDebug() << "Could not open file for write";
         return;
@@ -114,12 +114,13 @@ void MainWindow::readFromFile(QString fileName)
 {
     QFile mFile(fileName);
 
-    if(!mFile.open(QFile::ReadOnly | QFile::Text))
+    if(!mFile.open(QFile::ReadOnly))
     {
-        qDebug() << "Could not open file for read";
+        qDebug() << "Could not open upgrade file";
         return;
     }
 
+    qDebug() << "Upgrade file open";
     QByteArray HEXFile = mFile.readAll();
     int FileSize = mFile.size();
 
@@ -136,9 +137,9 @@ void MainWindow::readFromFile(QString fileName)
 //    int Max = FileSize/192;
 
 
-    qDebug() <<"Programming Flash...";
+//    qDebug() <<"Programming Flash...";
 
-    do{
+//    do{
 //        emit SetProgressBar(Progress++,Max);
 
 //        // Do not allow any addresses outside of FLASH Area
@@ -158,10 +159,108 @@ void MainWindow::readFromFile(QString fileName)
         QByteArray Block192;
 
         Block192 = HEXFile.mid(FilePosition,192);
-
         serial.write(Block192);
-
+        qDebug() << "Block 1 write";
         FilePosition+=192;
+        Block192 = HEXFile.mid(FilePosition,192);
+        serial.clear();
+        if(!serial.waitForReadyRead(3000) == true){
+            qDebug() << "No response after block 1 write ";
+            return;
+        }
+
+        QByteArray incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 2 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
+        serial.clear();
+        if(!serial.waitForReadyRead(3000) == true){
+            qDebug() << "No response after block 2 write ";
+            return;
+        }
+
+        incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 3 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
+        serial.clear();
+        if(!serial.waitForReadyRead(2000) == true){
+            qDebug() << "No response after block 3 write ";
+            return;
+        }
+
+        incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 4 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
+        serial.clear();
+        if(!serial.waitForReadyRead(2000) == true){
+            qDebug() << "No response after block 4 write ";
+            return;
+        }
+
+        incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 5 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
+        serial.clear();
+        if(!serial.waitForReadyRead(2000) == true){
+            qDebug() << "No response after block 5 write ";
+            return;
+        }
+
+        incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 6 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
+        serial.clear();
+        if(!serial.waitForReadyRead(2000) == true){
+            qDebug() << "No response after block 6 write ";
+            return;
+        }
+
+        incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 7 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
+        serial.clear();
+        if(!serial.waitForReadyRead(2000) == true){
+            qDebug() << "No response after block 7 write ";
+            return;
+        }
+
+        incoming = serial.readAll();
+        sscanf(incoming, "%s", usbCmd);
+        if(strcmp(usbCmd,"OK")==0){
+            serial.write(Block192);
+            qDebug() << "Block 8 write";
+            FilePosition+=192;
+            Block192 = HEXFile.mid(FilePosition,192);
+        }
 
 //        Port->read_port(1000);
 //        if(Port->EXT_COMMAND.left(2)!="pf")
@@ -174,8 +273,8 @@ void MainWindow::readFromFile(QString fileName)
 
 //        n32AddressCounter+=64;
 
-    }while(FilePosition-192 < FileSize);
-    qDebug() <<"Programming Flash...Done";
+//    }while(FilePosition-192 < FileSize);
+//    qDebug() <<"Programming Flash...Done";
 
     //-------------------------- End of Flash Programming ------------------------
     //----------------------------------------------------------------------------
@@ -186,3 +285,54 @@ void MainWindow::readFromFile(QString fileName)
 //    qDebug() << mText;
     mFile.close();
 }
+
+void MainWindow::on_pushButton_5_clicked()
+{
+
+}
+
+
+void MainWindow::on_Upgrade_push_button_clicked()
+{
+    serial.clear();
+    serial.write("UPGRADE");
+    qDebug() << "UPGRADE";
+    msdelay(1000);
+//    serial.waitForReadyRead(2000);
+//    QByteArray incoming = serial.readAll();
+//    sscanf(incoming, "%s", usbCmd);
+//    if(strcmp(usbCmd,"OK")==0){
+        serial.clear();
+        serial.write("1");
+        qDebug() << "1";
+//    }
+
+    if(!serial.waitForReadyRead(2000) == true){
+        qDebug() << "No response after erase ";
+        return;
+    }
+    QByteArray incoming = serial.readAll();
+    sscanf(incoming, "%s", usbCmd);
+    if(strcmp(usbCmd,"OK")==0){
+        readFromFile(mFile);
+    }
+//    msdelay(50);
+//    serial.open(QIODevice::ReadWrite);
+//    serial.write("JUMP");
+//    qDebug() << "Jump to App";
+//    msdelay(50);
+//    serial.close();
+//    while(serial.isOpen()){
+//        if(!serial.waitForReadyRead(-1)){
+//            qDebug() << "waiting for upgrade response";
+//        }
+//        else{
+//            QByteArray datas = serial.readAll();
+//            sscanf(datas, "%s", usbCmd);
+//            if(strcmp(usbCmd,"OK")==0){
+//                serial.close();
+//            }
+//        }
+//    }
+}
+

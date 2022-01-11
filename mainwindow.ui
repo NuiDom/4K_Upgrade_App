@@ -37,7 +37,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Upgrade</string>
+     <string>Jump to BL</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
@@ -63,7 +63,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>Jump</string>
+     <string>Jump to App</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="broken">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>140</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Broken</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Upgrade_push_button">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>180</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Upgrade</string>
     </property>
    </widget>
   </widget>
