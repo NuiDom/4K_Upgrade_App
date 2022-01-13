@@ -92,6 +92,19 @@
      <string>Upgrade</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="Open_File_push_button">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>220</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open File</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

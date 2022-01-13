@@ -4,12 +4,19 @@
 #include <QTimer>
 #include <QFile>
 #include <QTextStream>
+#include <QString>
+#include <QTextStream>
+#include <QCoreApplication>
+#include<qstring.h>
+#include <QDebug>
+//#include </opt/poky/omni_qt5/sysroots/cortexa9-vfp-neon-poky-linux-gnueabi/usr/include/qt5/QtCore/qregexp.h>
 
 #define INPUT_PATH "/home/dnutt/Desktop/4K_1.0.txt"
 
 QSerialPort serial;
 char usbCmd[10] = "";
-QString mFile = "/home/dnutt/Desktop/4K.X.production.hex";
+char usbCmd2[10] = "";
+QString mFile = "/home/dnutt/Desktop/output.bin";
 QString m2File = "/home/dnutt/Desktop/FF.txt";
 
 MainWindow::MainWindow(QWidget *parent)
@@ -158,7 +165,8 @@ void MainWindow::readFromFile(QString fileName)
         serial.clear();
         QByteArray Block192;
 
-        Block192 = HEXFile.mid(FilePosition,192);
+        Block192 = HEXFile.mid(FilePosition,10);
+        serial.write("Hello");
         serial.write(Block192);
         qDebug() << "Block 1 write";
         FilePosition+=192;
@@ -286,53 +294,104 @@ void MainWindow::readFromFile(QString fileName)
     mFile.close();
 }
 
-void MainWindow::on_pushButton_5_clicked()
-{
-
-}
-
-
 void MainWindow::on_Upgrade_push_button_clicked()
 {
-    serial.clear();
-    serial.write("UPGRADE");
-    qDebug() << "UPGRADE";
-    msdelay(1000);
-//    serial.waitForReadyRead(2000);
+    QByteArray Block1;
+    QByteArray Block2;
+    QByteArray Block3;
+    Block1.resize(64);
+    Block2.resize(64);
+    Block3.resize(64);
+    for(int x=0; x<64; x++){
+        Block1[x] = 0x41;
+        Block2[x] = 0x41;
+        Block3[x] = 0x41;
+    }
+//    QFile myFile(mFile);
+
+//    if(!myFile.open(QFile::ReadOnly))
+//    {
+//        qDebug() << "Could not open upgrade file";
+//        return;
+//    }
+//    qDebug() << "Upgrade file open";
+
+//    QByteArray BinFile = myFile.readAll();
+//    int FileSize = myFile.size();
+//    int     FilePosition=0;
+
+//    serial.clear();
+
+//    QByteArray Block64;
+//    Block64 = BinFile.mid(FilePosition,64);
+//    qDebug() << Block64;
+//    serial.write(Block64);
+//    FilePosition +=64;
+    qDebug() << Block1;
+    serial.write(Block1);
+    msdelay(500);
+    if(serial.waitForReadyRead(3000)==false){
+        qDebug() << "No response from PIC";
+        return;
+    }
+    QByteArray incoming1 = serial.readAll();
+    qDebug() << incoming1;
+    sscanf(incoming1, "%s", usbCmd);
+    if(strcmp(usbCmd,"OK")==0){
+        serial.clear();
+        qDebug() << Block2;
+        serial.write(Block2);
+    }
+    msdelay(500);
+    if(serial.waitForReadyRead(3000)==false){
+        qDebug() << "No response from PIC";
+        return;
+    }
+
+//    for(int y=0; y<10; y++)
+//        usbCmd[y] = '\0';
+    QByteArray incoming2 = serial.readAll();
+    qDebug() << incoming2;
+    sscanf(incoming2, "%s", usbCmd2);
+    if(strcmp(usbCmd2,"OK")==0){
+        serial.clear();
+        qDebug() << Block3;
+        serial.write(Block3);
+    }
+
+//    if(serial.waitForReadyRead(3000)==false){
+//        qDebug() << "No response from PIC";
+//        return;
+//    }
 //    QByteArray incoming = serial.readAll();
 //    sscanf(incoming, "%s", usbCmd);
 //    if(strcmp(usbCmd,"OK")==0){
-        serial.clear();
-        serial.write("1");
-        qDebug() << "1";
+//        serial.clear();
+//        Block64 = BinFile.mid(FilePosition,64);
+//        qDebug() << Block64;
+//        serial.write(Block64);
+//        FilePosition +=64;
 //    }
 
-    if(!serial.waitForReadyRead(2000) == true){
-        qDebug() << "No response after erase ";
-        return;
-    }
-    QByteArray incoming = serial.readAll();
-    sscanf(incoming, "%s", usbCmd);
-    if(strcmp(usbCmd,"OK")==0){
-        readFromFile(mFile);
-    }
-//    msdelay(50);
-//    serial.open(QIODevice::ReadWrite);
-//    serial.write("JUMP");
-//    qDebug() << "Jump to App";
-//    msdelay(50);
-//    serial.close();
-//    while(serial.isOpen()){
-//        if(!serial.waitForReadyRead(-1)){
-//            qDebug() << "waiting for upgrade response";
-//        }
-//        else{
-//            QByteArray datas = serial.readAll();
-//            sscanf(datas, "%s", usbCmd);
-//            if(strcmp(usbCmd,"OK")==0){
-//                serial.close();
-//            }
-//        }
+//    if(serial.waitForReadyRead(3000)==false){
+//        qDebug() << "No response from PIC";
+//        return;
 //    }
+////    serial.waitForReadyRead(-1);
+//    incoming = serial.readAll();
+//    sscanf(incoming, "%s", usbCmd);
+//    if(strcmp(usbCmd,"OK")==0){
+//        serial.clear();
+//        Block64 = BinFile.mid(FilePosition,64);
+//        qDebug() << Block64;
+//        serial.write(Block64);
+//        FilePosition +=64;
+//    }
+}
+
+
+void MainWindow::on_Open_File_push_button_clicked()
+{
+    readFromFile(mFile);
 }
 

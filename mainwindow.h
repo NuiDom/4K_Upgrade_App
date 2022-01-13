@@ -24,9 +24,9 @@ private slots:
 
     void on_pushButton_4_clicked();
 
-    void on_pushButton_5_clicked();
-
     void on_Upgrade_push_button_clicked();
+
+    void on_Open_File_push_button_clicked();
 
 private:
     Ui::MainWindow *ui;
