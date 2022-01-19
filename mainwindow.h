@@ -28,10 +28,17 @@ private slots:
 
     void on_Open_File_push_button_clicked();
 
+    void on_pushButton_Erase_clicked();
+
+    void on_pushButton_ReadMemory_clicked();
+
+signals:
+     void signalProgramPIC();
+     void signalReadPIC();
+
 private:
     Ui::MainWindow *ui;
 
-    void msdelay(int msec);
     void writeToFile(QString fileName);
     void readFromFile(QString fileName);
 };
