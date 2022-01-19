@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QString>
 #include <QTextStream>
+#include <QDataStream>
 #include <QCoreApplication>
 #include<qstring.h>
 #include <QDebug>
@@ -27,7 +28,7 @@ public:
 public slots:
     int	ProgramPIC();
     void ReadPIC();
-    void writeToFile(QString fileName, QString output);
+    void writeToFile(QString fileName, QByteArray output);
 
 signals:
     void SetProgressBar(int,int);

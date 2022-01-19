@@ -113,20 +113,23 @@ void upgradePIC::ReadPIC()
 
     QByteArray data = serial.readAll();
     qDebug() << data;
+    //if data is "STOP" then stop the timer and return
     writeToFile(fileName, data);
 }
 
-void upgradePIC::writeToFile(QString file, QString output)
+void upgradePIC::writeToFile(QString file, QByteArray output)
 {
     QFile mFile(file);
-    if(!mFile.open(QFile::ReadWrite))
+    if(!mFile.open(QFile::Append))
     {
         qDebug() << "Could not open file for write";
         return;
     }
 
-    QTextStream out(&mFile);
+    QDataStream out(&mFile);
     out << output;
 
     mFile.flush();
+
+    mFile.close();
 }
