@@ -6,7 +6,7 @@
 #include <QStringRef>
 #include <delay.h>
 
-QString fileName = "/home/dnutt/upgradeFile.txt";
+QString fileName = "/home/dnutt/upgradeFile.bin";
 QSerialPort serial;
 
 bool usbreadflag = false;
@@ -38,7 +38,7 @@ int upgradePIC::ProgramPIC()
 
     QByteArray BinFile = myFile.readAll();
     int FileSize = myFile.size();
-
+    qDebug() << FileSize;
     int x=0;
     QByteArray Block64;
     QByteArray incoming;
@@ -107,35 +107,33 @@ int upgradePIC::ProgramPIC()
 
 void upgradePIC::ReadPIC()
 {
-    while(usbreadflag == true){
+    while(usbreadflag == true){                 //checks flag to start/stop reading
     serial.clear(QSerialPort::AllDirections);
-    serial.write("READ_MEM");
+    serial.write("READ_MEM");                   //Sent to PIC to request next word
     qDebug() << "READ_MEM";
 
-    serial.waitForReadyRead(2000);
+    serial.waitForReadyRead(2000);              //waits for response, timeout - 2sec
 
     PICdata = serial.readAll();
     qDebug() << PICdata;
     sscanf(PICdata, "%s", usbCmd);
-    if((strcmp(usbCmd,"STOP")==0))
-        usbreadflag = false;
-    writeToFile(fileName, PICdata);
+    if((strcmp(usbCmd,"STOP")==0))              //checks to see if PIC is done
+        usbreadflag = false;                    //if all words received stops reading
+    writeToFile(fileName, PICdata);             //writes each word into upgrade file
     }
 }
 
 void upgradePIC::writeToFile(QString file, QByteArray output)
 {
     QFile mFile(file);
-    if(!mFile.open(QFile::Append))
+    if(!mFile.open(QFile::WriteOnly | QFile::Append))
     {
         qDebug() << "Could not open file for write";
         return;
     }
 
-    QDataStream out(&mFile);
-    out << output;
-
-    mFile.flush();
+    mFile.write(output);
 
     mFile.close();
+    qDebug() << "one byte";
 }
