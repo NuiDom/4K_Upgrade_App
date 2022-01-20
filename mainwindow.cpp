@@ -9,6 +9,10 @@
 
 extern QSerialPort serial;
 upgradePIC Upgrade;
+QTimer timer;
+extern QByteArray PICdata;
+char cmd[10];
+extern bool usbreadflag;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -91,5 +95,6 @@ void MainWindow::on_pushButton_Erase_clicked()
 void MainWindow::on_pushButton_ReadMemory_clicked()
 {
     emit signalReadPIC();
+    usbreadflag = true;
 }
 

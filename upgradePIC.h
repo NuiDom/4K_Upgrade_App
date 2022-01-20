@@ -17,6 +17,8 @@
 #define DONE_STATUS 1
 
 extern QSerialPort Serial;
+extern QByteArray PICdata;
+extern bool usbreadflag;
 
 class upgradePIC : public QObject
 {

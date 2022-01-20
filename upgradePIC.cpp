@@ -9,9 +9,11 @@
 QString fileName = "/home/dnutt/upgradeFile.txt";
 QSerialPort serial;
 
+bool usbreadflag = false;
 bool  upgradeNow = false;
 static int FilePosition = 0;
 char usbCmd[20] = "";
+QByteArray PICdata;
 
 upgradePIC::upgradePIC(QObject *parent) : QObject(parent)
 {
@@ -105,16 +107,20 @@ int upgradePIC::ProgramPIC()
 
 void upgradePIC::ReadPIC()
 {
+    while(usbreadflag == true){
     serial.clear(QSerialPort::AllDirections);
     serial.write("READ_MEM");
     qDebug() << "READ_MEM";
 
     serial.waitForReadyRead(2000);
 
-    QByteArray data = serial.readAll();
-    qDebug() << data;
-    //if data is "STOP" then stop the timer and return
-    writeToFile(fileName, data);
+    PICdata = serial.readAll();
+    qDebug() << PICdata;
+    sscanf(PICdata, "%s", usbCmd);
+    if((strcmp(usbCmd,"STOP")==0))
+        usbreadflag = false;
+    writeToFile(fileName, PICdata);
+    }
 }
 
 void upgradePIC::writeToFile(QString file, QByteArray output)
