@@ -19,6 +19,7 @@
 extern QSerialPort Serial;
 extern QByteArray PICdata;
 extern bool usbreadflag;
+extern bool usbwriteflag;
 
 class upgradePIC : public QObject
 {
@@ -28,9 +29,12 @@ public:
     ~upgradePIC();
 
 public slots:
+    void ErasePIC();
     int	ProgramPIC();
     void ReadPIC();
     void writeToFile(QString fileName, QByteArray output);
+    void ReadWord();
+    void WriteWord();
 
 signals:
     void SetProgressBar(int,int);

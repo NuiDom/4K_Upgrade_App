@@ -32,9 +32,16 @@ private slots:
 
     void on_pushButton_ReadMemory_clicked();
 
+    void on_pushButton_ReadWord_clicked();
+
+    void on_pushButton_WriteWord_clicked();
+
 signals:
      void signalProgramPIC();
+     void signalErasePIC();
      void signalReadPIC();
+     void signalReadWord();
+     void signalWriteWord();
 
 private:
     Ui::MainWindow *ui;

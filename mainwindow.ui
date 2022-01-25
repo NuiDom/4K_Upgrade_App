@@ -131,6 +131,32 @@
      <string>Read Memory</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_ReadWord">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>260</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Read Word</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_WriteWord">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>260</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Write Word</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

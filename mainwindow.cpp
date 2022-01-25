@@ -13,6 +13,7 @@ QTimer timer;
 extern QByteArray PICdata;
 char cmd[10];
 extern bool usbreadflag;
+extern bool usbwriteflag;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent)
     serial.setFlowControl(QSerialPort::NoFlowControl);
     connect(this, SIGNAL(signalProgramPIC()), &Upgrade, SLOT(ProgramPIC()));
     connect(this, SIGNAL(signalReadPIC()), &Upgrade, SLOT(ReadPIC()));
+    connect(this, SIGNAL(signalReadWord()), &Upgrade, SLOT(ReadWord()));
+    connect(this, SIGNAL(signalWriteWord()), &Upgrade, SLOT(WriteWord()));
+    connect(this, SIGNAL(signalErasePIC()), &Upgrade, SLOT(ErasePIC()));
 }
 
 MainWindow::~MainWindow()
@@ -60,7 +64,7 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_4_clicked()
 {
     serial.clear();
-    serial.write("JUMP");
+    serial.write("JUMP_APP");
     qDebug() << "Jump to App";
     msdelay(50);
     serial.close();
@@ -74,6 +78,7 @@ void MainWindow::readFromFile(QString fileName)
 
 void MainWindow::on_Upgrade_push_button_clicked()
 {
+    usbwriteflag = true;
     emit signalProgramPIC();
 }
 
@@ -86,9 +91,7 @@ void MainWindow::on_Open_File_push_button_clicked()
 
 void MainWindow::on_pushButton_Erase_clicked()
 {
-    serial.clear();
-    serial.write("ERASE");
-    qDebug() << "ERASE";
+    emit signalErasePIC();
 }
 
 
@@ -96,5 +99,17 @@ void MainWindow::on_pushButton_ReadMemory_clicked()
 {
     emit signalReadPIC();
     usbreadflag = true;
+}
+
+
+void MainWindow::on_pushButton_ReadWord_clicked()
+{
+    emit signalReadWord();
+}
+
+
+void MainWindow::on_pushButton_WriteWord_clicked()
+{
+    emit signalWriteWord();
 }
 
